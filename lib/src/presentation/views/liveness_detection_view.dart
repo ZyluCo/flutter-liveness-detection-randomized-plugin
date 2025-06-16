@@ -69,7 +69,7 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
     required List<LivenessDetectionStepItem> list,
     required bool isSmileLast,
   }) {
-    if (isSmileLast) {
+    if (isSmileLast && list.length > 2) {
       int? blinkIndex =
           list.indexWhere((item) => item.step == LivenessDetectionStep.blink);
       int? smileIndex =
@@ -184,7 +184,7 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
 
   void _preInitCallBack() {
     _isInfoStepCompleted = !widget.config.startWithInfoScreen;
-     shuffleListLivenessChallenge(
+    shuffleListLivenessChallenge(
         list: widget.config.useCustomizedLabel &&
                 widget.config.customizedLabel != null
             ? customizedLivenessLabel(widget.config.customizedLabel!)
