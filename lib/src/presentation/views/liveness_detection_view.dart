@@ -69,25 +69,25 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
     required List<LivenessDetectionStepItem> list,
     required bool isSmileLast,
   }) {
-    if (isSmileLast && list.length > 2) {
+    // For blink and smile only: ensure blink comes first, smile comes last
+    if (isSmileLast) {
       int? blinkIndex =
           list.indexWhere((item) => item.step == LivenessDetectionStep.blink);
       int? smileIndex =
           list.indexWhere((item) => item.step == LivenessDetectionStep.smile);
 
       if (blinkIndex != -1 && smileIndex != -1) {
-        LivenessDetectionStepItem blinkItem = list.removeAt(blinkIndex);
-        LivenessDetectionStepItem smileItem = list
-            .removeAt(smileIndex > blinkIndex ? smileIndex - 1 : smileIndex);
-        list.shuffle(Random());
-        list.insert(list.length - 1, blinkItem);
-        list.add(smileItem);
-      } else {
-        list.shuffle(Random());
+        // If both blink and smile exist, ensure proper order
+        LivenessDetectionStepItem blinkItem = list[blinkIndex];
+        LivenessDetectionStepItem smileItem = list[smileIndex];
+
+        // Clear the list and add items in desired order
+        list.clear();
+        list.add(blinkItem); // Blink first
+        list.add(smileItem); // Smile last
       }
-    } else {
-      list.shuffle(Random());
     }
+    // If isSmileLast is false, keep the original order (no shuffling)
   }
 
   List<T> manualRandomItemLiveness<T>(List<T> list) {
