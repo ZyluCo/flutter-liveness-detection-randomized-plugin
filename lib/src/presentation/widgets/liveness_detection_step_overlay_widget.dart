@@ -87,7 +87,7 @@ class LivenessDetectionStepOverlayWidgetState
   CircularProgressWidget _buildCircularIndicator() {
     return CircularProgressWidget(
       unselectedColor: Colors.grey,
-      selectedColor: Colors.green,
+      selectedColor: const Color(0xff633DA2),
       heightLine: _heightLine,
       current: _currentStepIndicator,
       maxStep: _indicatorMaxStep,
@@ -183,19 +183,6 @@ class LivenessDetectionStepOverlayWidgetState
                                   ? Colors.white
                                   : Colors.black),
                         ),
-                        Visibility(
-                          replacement: const SizedBox.shrink(),
-                          visible: widget.showDurationUiText,
-                          child: Text(
-                            _getRemainingTimeText(_remainingDuration),
-                            style: TextStyle(
-                              color: widget.isDarkMode
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
                         Text(
                           stepCounter,
                           style: TextStyle(
@@ -223,8 +210,8 @@ class LivenessDetectionStepOverlayWidgetState
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
+        _buildTimerCountdown(),
         _buildCircularCamera(),
-        const SizedBox(height: 16),
         _buildFaceDetectionStatus(),
         const SizedBox(height: 16),
         _buildStepPageView(),
@@ -234,9 +221,37 @@ class LivenessDetectionStepOverlayWidgetState
     );
   }
 
+  Widget _buildTimerCountdown() {
+    if (!widget.showDurationUiText || widget.duration == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Column(
+        children: [
+          Text('Time left',
+              style: TextStyle(
+                color: widget.isDarkMode ? Colors.white : Colors.black,
+                fontSize: 14,
+              )),
+          const SizedBox(height: 8),
+          Text(
+            _getRemainingTimeText(_remainingDuration),
+            style: TextStyle(
+              color: widget.isDarkMode ? Colors.white : Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w600, // Semi-bold
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCircularCamera() {
     return SizedBox(
-      height: 300,
+      height: 500,
       width: 300,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(1000),
@@ -252,8 +267,9 @@ class LivenessDetectionStepOverlayWidgetState
   }
 
   Widget _buildFaceDetectionStatus() {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
           child: widget.isDarkMode
@@ -266,7 +282,9 @@ class LivenessDetectionStepOverlayWidgetState
                 )
               : ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                      widget.isFaceDetected ? Colors.green : Colors.black,
+                      widget.isFaceDetected
+                          ? const Color(0xff633DA2)
+                          : Colors.black,
                       BlendMode.modulate),
                   child: LottieBuilder.asset(
                     widget.isFaceDetected

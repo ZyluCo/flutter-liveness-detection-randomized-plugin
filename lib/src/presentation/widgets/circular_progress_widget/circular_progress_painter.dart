@@ -61,10 +61,10 @@ class CircularProgressPainter extends CustomPainter {
       var innerCircleRadius = (radius - heightLine);
 
       var x1 = centerX + outerCircleRadius * math.cos(i * math.pi / 180);
-      var y1 = centerX + outerCircleRadius * math.sin(i * math.pi / 180);
+      var y1 = centerY + outerCircleRadius * math.sin(i * math.pi / 180);
       //
       var x2 = centerX + innerCircleRadius * math.cos(i * math.pi / 180);
-      var y2 = centerX + innerCircleRadius * math.sin(i * math.pi / 180);
+      var y2 = centerY + innerCircleRadius * math.sin(i * math.pi / 180);
       var dashBrush = paint
         ..color = i < draw
             ? selectedColor ?? Colors.red
