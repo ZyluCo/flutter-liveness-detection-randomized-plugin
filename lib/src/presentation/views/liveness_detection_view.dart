@@ -503,9 +503,9 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
         as LivenessThresholdBlink?;
 
     if ((face.leftEyeOpenProbability ?? 1.0) <
-            (blinkThreshold?.leftEyeProbability ?? 0.25) &&
+            (blinkThreshold?.leftEyeProbability ?? 0.05) &&
         (face.rightEyeOpenProbability ?? 1.0) <
-            (blinkThreshold?.rightEyeProbability ?? 0.25)) {
+            (blinkThreshold?.rightEyeProbability ?? 0.05)) {
       _startProcessing();
       await _completeStep(step: step);
     }
@@ -603,9 +603,8 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
             .instance.thresholdConfig
             .firstWhereOrNull((p0) => p0 is LivenessThresholdSmile)
         as LivenessThresholdSmile?;
-
     if ((face.smilingProbability ?? 0) >
-        (smileThreshold?.probability ?? 0.65)) {
+        (smileThreshold?.probability ?? 0.995)) {
       _startProcessing();
       await _completeStep(step: step);
     }
