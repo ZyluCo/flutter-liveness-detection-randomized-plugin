@@ -608,7 +608,7 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
             .firstWhereOrNull((p0) => p0 is LivenessThresholdSmile)
         as LivenessThresholdSmile?;
     if ((face.smilingProbability ?? 0) >
-        (smileThreshold?.probability ?? 0.995)) {
+        (smileThreshold?.probability ?? 0.99)) {
       _startProcessing();
       await _completeStep(step: step);
     }

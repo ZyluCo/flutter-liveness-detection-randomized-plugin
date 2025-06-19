@@ -12,7 +12,7 @@ class LivenessThresholdSmile extends LivenessDetectionThreshold {
   final double probability;
 
   LivenessThresholdSmile({
-    this.probability = 0.995,
+    this.probability = 0.99,
   }) : super() {
     assert(
       probability < 1.0 || probability > 0.0,
