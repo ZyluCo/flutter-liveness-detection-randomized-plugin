@@ -256,7 +256,7 @@ class LivenessDetectionStepOverlayWidgetState
 
   Widget _buildCircularCamera() {
     return SizedBox(
-      height: 500,
+      height: 474,
       width: 300,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(1000),

@@ -261,9 +261,7 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
         InputImageRotationValue.fromRawValue(camera.sensorOrientation);
     if (imageRotation == null) return;
 
-    final inputImageFormat =
-        InputImageFormatValue.fromRawValue(cameraImage.format.raw);
-    if (inputImageFormat == null) return;
+    final inputImageFormat = Platform.isIOS ? InputImageFormat.bgra8888 : InputImageFormat.nv21;
 
     final inputImageData = InputImageMetadata(
       size: imageSize,
