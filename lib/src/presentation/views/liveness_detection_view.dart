@@ -292,23 +292,30 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
         if (mounted) setState(() => _faceDetectedState = false);
       } else {
         if (mounted) setState(() => _faceDetectedState = true);
-        final currentIndex = _stepsKey.currentState?.currentIndex ?? 0;
-        if (widget.config.useCustomizedLabel) {
-          if (currentIndex <
-              customizedLivenessLabel(widget.config.customizedLabel!).length) {
-            _detectFace(
-              face: faces.first,
-              step: customizedLivenessLabel(
-                      widget.config.customizedLabel!)[currentIndex]
-                  .step,
-            );
-          }
+        
+        // If allowDetectionSteps is false, skip steps and directly take picture
+        if (!widget.config.allowDetectionSteps) {
+          _takePicture();
         } else {
-          if (currentIndex < stepLiveness.length) {
-            _detectFace(
-              face: faces.first,
-              step: stepLiveness[currentIndex].step,
-            );
+          // Normal flow with detection steps
+          final currentIndex = _stepsKey.currentState?.currentIndex ?? 0;
+          if (widget.config.useCustomizedLabel) {
+            if (currentIndex <
+                customizedLivenessLabel(widget.config.customizedLabel!).length) {
+              _detectFace(
+                face: faces.first,
+                step: customizedLivenessLabel(
+                        widget.config.customizedLabel!)[currentIndex]
+                    .step,
+              );
+            }
+          } else {
+            if (currentIndex < stepLiveness.length) {
+              _detectFace(
+                face: faces.first,
+                step: stepLiveness[currentIndex].step,
+              );
+            }
           }
         }
       }
@@ -471,26 +478,37 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
           width: MediaQuery.of(context).size.width,
           color: widget.isDarkMode ? Colors.black : Colors.white,
         ),
-        LivenessDetectionStepOverlayWidget(
-          duration: widget.config.durationLivenessVerify,
-          showDurationUiText: widget.config.showDurationUiText,
-          isDarkMode: widget.isDarkMode,
-          isFaceDetected: _faceDetectedState,
-          camera: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationY(3.14159),
-            child: CameraPreview(_cameraController!),
+        // Show step overlay only if allowDetectionSteps is true
+        if (widget.config.allowDetectionSteps)
+          LivenessDetectionStepOverlayWidget(
+            duration: widget.config.durationLivenessVerify,
+            showDurationUiText: widget.config.showDurationUiText,
+            isDarkMode: widget.isDarkMode,
+            isFaceDetected: _faceDetectedState,
+            camera: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(3.14159),
+              child: CameraPreview(_cameraController!),
+            ),
+            key: _stepsKey,
+            steps: widget.config.useCustomizedLabel
+                ? customizedLivenessLabel(widget.config.customizedLabel!)
+                : stepLiveness,
+            showCurrentStep: widget.showCurrentStep,
+            onCompleted: () => Future.delayed(
+              const Duration(milliseconds: 500),
+              () => _takePicture(),
+            ),
           ),
-          key: _stepsKey,
-          steps: widget.config.useCustomizedLabel
-              ? customizedLivenessLabel(widget.config.customizedLabel!)
-              : stepLiveness,
-          showCurrentStep: widget.showCurrentStep,
-          onCompleted: () => Future.delayed(
-            const Duration(milliseconds: 500),
-            () => _takePicture(),
+        // When allowDetectionSteps is false, just show camera preview
+        if (!widget.config.allowDetectionSteps)
+          Center(
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(3.14159),
+              child: CameraPreview(_cameraController!),
+            ),
           ),
-        ),
       ],
     );
   }

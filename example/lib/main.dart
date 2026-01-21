@@ -17,6 +17,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   List<String?> capturedImages = [];
   String? imgPath;
+  bool allowDetectionSteps = true; // Toggle for testing
 
   @override
   void initState() {
@@ -56,6 +57,24 @@ class _HomeViewState extends State<HomeView> {
               height: 12,
             ),
           ],
+          // Toggle switch for detection steps
+          Card(
+            child: SwitchListTile(
+              title: const Text('Allow Detection Steps'),
+              subtitle: Text(
+                allowDetectionSteps
+                    ? 'Users must complete blink/smile steps'
+                    : 'Direct face capture (no steps)',
+              ),
+              value: allowDetectionSteps,
+              onChanged: (bool value) {
+                setState(() {
+                  allowDetectionSteps = value;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
           ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt_rounded),
               onPressed: () async {
@@ -64,25 +83,38 @@ class _HomeViewState extends State<HomeView> {
                         .livenessDetection(
                   context: context,
                   config: LivenessDetectionConfig(
-                    isEnableMaxBrightness: true, // enable disable max brightness when taking face photo
-                    durationLivenessVerify: 60, // default duration value is 45 second
-                    showDurationUiText: false, // show or hide duration remaining when perfoming liveness detection
-                    startWithInfoScreen: true, // show or hide tutorial screen
-                    useCustomizedLabel: false, // set to true value for enable 'customizedLabel', set to false to use default label
+                    allowDetectionSteps:
+                        allowDetectionSteps, // NEW: Configure detection steps
+                    isEnableMaxBrightness:
+                        true, // enable disable max brightness when taking face photo
+                    durationLivenessVerify: allowDetectionSteps
+                        ? 60
+                        : 15, // Shorter timeout for direct capture
+                    showDurationUiText:
+                        false, // show or hide duration remaining when perfoming liveness detection
+                    startWithInfoScreen:
+                        allowDetectionSteps, // Skip info for direct capture
+                    useCustomizedLabel:
+                        false, // set to true value for enable 'customizedLabel', set to false to use default label
                     // provide an empty string if you want to pass the liveness challenge
                     customizedLabel: LivenessDetectionLabelModel(
-                      blink: '', // add empty string to skip/pass this liveness challenge
+                      blink:
+                          '', // add empty string to skip/pass this liveness challenge
                       lookDown: '',
                       lookLeft: '',
                       lookRight: '',
-                      lookUp: 'Tengok Atas', // example of customize label name for liveness challenge. it will replace default 'look up'
+                      lookUp:
+                          'Tengok Atas', // example of customize label name for liveness challenge. it will replace default 'look up'
                       smile: null, // null value to use default label name
                     ),
                   ),
-                  isEnableSnackBar: true, // snackbar to notify either liveness is success or failed
-                  shuffleListWithSmileLast: true, // put 'smile' challenge always at the end of liveness challenge, if `useCustomizedLabel` is true, this automatically set to false
+                  isEnableSnackBar:
+                      true, // snackbar to notify either liveness is success or failed
+                  shuffleListWithSmileLast:
+                      true, // put 'smile' challenge always at the end of liveness challenge, if `useCustomizedLabel` is true, this automatically set to false
                   isDarkMode: false, // enable dark/light mode
-                  showCurrentStep: true, // show number current step of liveness
+                  showCurrentStep:
+                      allowDetectionSteps, // Only show steps when enabled
                 );
                 if (mounted) {
                   setState(() {
@@ -90,7 +122,28 @@ class _HomeViewState extends State<HomeView> {
                   });
                 }
               },
-              label: const Text('Liveness Detection System')),
+              label: Text(allowDetectionSteps
+                  ? 'Liveness Detection with Steps'
+                  : 'Quick Face Capture')),
+          const SizedBox(height: 8),
+          if (allowDetectionSteps)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                '🔒 High Security Mode\nUsers will complete blink and smile verification',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.green, fontSize: 12),
+              ),
+            )
+          else
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                '⚡️ Quick Capture Mode\nFace is captured immediately when detected',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.orange, fontSize: 12),
+              ),
+            ),
         ],
       )),
     );
