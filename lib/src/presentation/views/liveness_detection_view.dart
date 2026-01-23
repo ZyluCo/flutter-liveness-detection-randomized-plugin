@@ -478,37 +478,27 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
           width: MediaQuery.of(context).size.width,
           color: widget.isDarkMode ? Colors.black : Colors.white,
         ),
-        // Show step overlay only if allowDetectionSteps is true
-        if (widget.config.allowDetectionSteps)
-          LivenessDetectionStepOverlayWidget(
-            duration: widget.config.durationLivenessVerify,
-            showDurationUiText: widget.config.showDurationUiText,
-            isDarkMode: widget.isDarkMode,
-            isFaceDetected: _faceDetectedState,
-            camera: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(3.14159),
-              child: CameraPreview(_cameraController!),
-            ),
-            key: _stepsKey,
-            steps: widget.config.useCustomizedLabel
-                ? customizedLivenessLabel(widget.config.customizedLabel!)
-                : stepLiveness,
-            showCurrentStep: widget.showCurrentStep,
-            onCompleted: () => Future.delayed(
-              const Duration(milliseconds: 500),
-              () => _takePicture(),
-            ),
+        LivenessDetectionStepOverlayWidget(
+          duration: widget.config.durationLivenessVerify,
+          showDurationUiText: widget.config.showDurationUiText,
+          isDarkMode: widget.isDarkMode,
+          isFaceDetected: _faceDetectedState,
+          camera: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(3.14159),
+            child: CameraPreview(_cameraController!),
           ),
-        // When allowDetectionSteps is false, just show camera preview
-        if (!widget.config.allowDetectionSteps)
-          Center(
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(3.14159),
-              child: CameraPreview(_cameraController!),
-            ),
+          key: _stepsKey,
+          steps: widget.config.useCustomizedLabel
+              ? customizedLivenessLabel(widget.config.customizedLabel!)
+              : stepLiveness,
+          showCurrentStep: widget.showCurrentStep,
+          showStepLabel: widget.config.allowDetectionSteps, // Pass config to hide/show step labels
+          onCompleted: () => Future.delayed(
+            const Duration(milliseconds: 500),
+            () => _takePicture(),
           ),
+        ),
       ],
     );
   }

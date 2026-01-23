@@ -12,6 +12,7 @@ class LivenessDetectionStepOverlayWidget extends StatefulWidget {
   final bool isDarkMode;
   final bool showDurationUiText;
   final int? duration;
+  final bool showStepLabel;
 
   const LivenessDetectionStepOverlayWidget(
       {super.key,
@@ -22,7 +23,8 @@ class LivenessDetectionStepOverlayWidget extends StatefulWidget {
       this.showCurrentStep = false,
       this.isDarkMode = true,
       this.showDurationUiText = false,
-      this.duration});
+      this.duration,
+      this.showStepLabel = true});
 
   @override
   State<LivenessDetectionStepOverlayWidget> createState() =>
@@ -219,8 +221,8 @@ class LivenessDetectionStepOverlayWidgetState
         _buildCircularCamera(),
         _buildFaceDetectionStatus(),
         const SizedBox(height: 16),
-        if (_pageViewVisible) _buildStepPageView(),
-        const SizedBox(height: 16),
+        if (_pageViewVisible && widget.showStepLabel) _buildStepPageView(),
+        if (widget.showStepLabel) const SizedBox(height: 16),
         widget.isDarkMode ? _buildLoaderDarkMode() : _buildLoaderLightMode(),
       ],
     );
