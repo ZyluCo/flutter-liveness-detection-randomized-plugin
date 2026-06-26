@@ -47,6 +47,28 @@ customizedLabel: LivenessDetectionLabelModel(
 ),
 ```
 
+## ⚡️ NEW: Skip Detection Steps (Direct Face Capture)
+
+You can now configure whether to use detection steps or directly capture the face:
+
+```dart
+// With detection steps (default - more secure)
+config: LivenessDetectionConfig(
+  allowDetectionSteps: true,  // Users must blink, smile, etc.
+)
+
+// Without detection steps (quick capture)
+config: LivenessDetectionConfig(
+  allowDetectionSteps: false, // Direct face capture, no verification steps
+)
+```
+
+**When to use each mode:**
+- `allowDetectionSteps: true` → Banking, KYC, high-security authentication
+- `allowDetectionSteps: false` → Quick profile photos, low-risk scenarios
+
+📖 [Read the full Detection Steps Configuration Guide](DETECTION_STEPS_GUIDE.md) for detailed usage and best practices.
+
 ## Platform Setup
 
 ### Android
