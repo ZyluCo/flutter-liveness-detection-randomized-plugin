@@ -28,7 +28,8 @@ class CameraImageUtils {
     _logCameraPlanesOnce(image);
     if (image.planes.isEmpty) return null;
 
-    if (image.format.group == ImageFormatGroup.yuv420) {
+    final format = InputImageFormatValue.fromRawValue(image.format.raw);
+    if (format == InputImageFormat.yuv_420_888) {
       if (image.planes.length < 3) return null;
       return _buildInputImage(
         image: image,
@@ -39,13 +40,11 @@ class CameraImageUtils {
       );
     }
 
-    final format = InputImageFormatValue.fromRawValue(image.format.raw) ??
-        InputImageFormat.nv21;
     return _buildInputImage(
       image: image,
       camera: camera,
       bytes: _concatenatePlanes(image),
-      format: format,
+      format: format ?? InputImageFormat.nv21,
       bytesPerRow: image.planes[0].bytesPerRow,
     );
   }
